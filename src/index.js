@@ -22,7 +22,7 @@ var todos = [
 $(function() {
   render();
 
-  $('#add-todo-form').submit(function (e){
+  $('#add-todo-form').submit(function(e) {
     e.preventDefault();
 
     const $inputValue = $(this).find('.todo-value');
@@ -30,6 +30,12 @@ $(function() {
     addTodo(newTitle);
 
     $inputValue.val('');
+  });
+
+  $('.delete').click(function(e) {
+    e.preventDefault();
+
+    deleteTodo($(this).parents('li').attr('data-id'));
   });
 });
 
@@ -44,13 +50,17 @@ function addTodo(title) {
   render();
 }
 
+function deleteTodo(id) {
+  $(`#todo-item-${id}`).remove();
+}
+
 function render() {
   const $list = $('#item-list');
   const listHtml = todos.map(function(todo) {
     const className = cn({
       checked: todo.done,
     });
-    return `<li class="${className}">
+    return `<li class="${className}" id="todo-item-${todo.id}" data-id="${todo.id}">
       <input type="checkbox" />
       <span>${todo.title}</span>
       <a href="#" class="delete">削除</a>
@@ -59,5 +69,3 @@ function render() {
 
   $list.html(listHtml);
 }
-
-

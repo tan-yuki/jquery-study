@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import cn from 'classnames';
+import _ from 'lodash';
 
 var todos = [
   {
@@ -32,11 +33,6 @@ $(function() {
     $inputValue.val('');
   });
 
-  $('.delete').click(function(e) {
-    e.preventDefault();
-
-    deleteTodo($(this).parents('li').attr('data-id'));
-  });
 });
 
 function addTodo(title) {
@@ -54,6 +50,20 @@ function deleteTodo(id) {
   $(`#todo-item-${id}`).remove();
 }
 
+function updateTodo(id, title) {
+
+  const index = _.findIndex(todos, (todo) => {
+    return id === todo.id;
+  });
+
+  if (index < 0) {
+    return;
+  }
+
+  todos[index].title = title;
+  render();
+}
+
 function render() {
   const $list = $('#item-list');
   const listHtml = todos.map(function(todo) {
@@ -68,4 +78,29 @@ function render() {
   });
 
   $list.html(listHtml);
+
+  $('.delete').click(function(e) {
+    e.preventDefault();
+
+    deleteTodo($(this).parents('li').attr('data-id'));
+  });
+
+  $('#item-list').find('li span').dblclick(function(e) {
+    const initValue = $(this).text();
+    const inputTextHtml = `<input type="text"
+      value=${initValue}
+    />`;
+
+    $(this).html(inputTextHtml);
+    $(this).find('input').keydown(function(e) {
+      if (e.keyCode !== 13) {
+        return;
+      }
+
+      const id = $(this).parents('li').attr('data-id');
+      const title = $(this).val();
+
+      updateTodo(parseInt(id, 10), title);
+    });
+  });
 }

@@ -50,7 +50,7 @@ function deleteTodo(id) {
   $(`#todo-item-${id}`).remove();
 }
 
-function updateTodo(id, title) {
+function updateTodo(id, attrs) {
 
   const index = _.findIndex(todos, (todo) => {
     return id === todo.id;
@@ -60,7 +60,9 @@ function updateTodo(id, title) {
     return;
   }
 
-  todos[index].title = title;
+  for (let key in attrs) {
+    todos[index][key] = attrs[key];
+  }
   render();
 }
 
@@ -70,8 +72,9 @@ function render() {
     const className = cn({
       checked: todo.done,
     });
+    const checked = todo.done ? ' checked' : '';
     return `<li class="${className}" id="todo-item-${todo.id}" data-id="${todo.id}">
-      <input type="checkbox" />
+      <input type="checkbox" ${checked} />
       <span>${todo.title}</span>
       <a href="#" class="delete">削除</a>
     </li>`;
@@ -100,7 +103,18 @@ function render() {
       const id = $(this).parents('li').attr('data-id');
       const title = $(this).val();
 
-      updateTodo(parseInt(id, 10), title);
+      updateTodo(parseInt(id, 10), {
+        title: title
+      });
+    });
+  });
+
+  $('#item-list').find('li input[type="checkbox"]').change(function(e) {
+    const id = $(this).parents('li').attr('data-id');
+    const checked = $(this).is(':checked');
+
+    updateTodo(parseInt(id, 10), {
+      done: checked
     });
   });
 }

@@ -25,8 +25,11 @@ $(function() {
   $('#add-todo-form').submit(function (e){
     e.preventDefault();
 
-    const newTitle = $(this).find('.todo-value').val();
+    const $inputValue = $(this).find('.todo-value');
+    const newTitle = $inputValue.val();
     addTodo(newTitle);
+
+    $inputValue.val('');
   });
 });
 
